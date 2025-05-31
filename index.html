@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registration Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .form-container {
+      max-width: 400px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #ccc;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input[type="text"], input[type="email"], input[type="password"], input[type="date"] {
+      width: 100%;
+      padding: 8px;
+    }
+    table {
+      width: 100%;
+      margin-top: 30px;
+      border-collapse: collapse;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+    .submit-btn {
+      background-color: #28a745;
+      color: white;
+      padding: 10px;
+      margin-top: 10px;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="form-container">
+    <h2>Registration Form</h2>
+    <form id="registrationForm">
+      <label for="name">Name</label>
+      <input type="text" id="name" required />
+
+      <label for="email">Email</label>
+      <input type="email" id="email" required />
+
+      <label for="password">Password</label>
+      <input type="password" id="password" required minlength="6" />
+
+      <label for="dob">Date of Birth</label>
+      <input type="date" id="dob" required />
+
+      <label>
+        <input type="checkbox" id="acceptTerms" />
+        Accept Terms & Conditions
+      </label>
+
+      <button type="submit" class="submit-btn">Submit</button>
+    </form>
+  </div>
+
+  <table id="entriesTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Password</th>
+        <th>Dob</th>
+        <th>Accepted terms?</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Entries will be added here -->
+    </tbody>
+  </table>
+
+  <script>
+    const form = document.getElementById('registrationForm');
+    const tableBody = document.querySelector('#entriesTable tbody');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const dob = document.getElementById('dob').value;
+      const accepted = document.getElementById('acceptTerms').checked;
+
+      // Validate age
+      const age = calculateAge(new Date(dob));
+      if (age < 18 || age > 55) {
+        alert('Age must be between 18 and 55');
+        return;
+      }
+
+      if (!accepted) {
+        alert('You must accept the terms and conditions');
+        return;
+      }
+
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${name}</td>
+        <td>${email}</td>
+        <td>${password}</td>
+        <td>${dob}</td>
+        <td>${accepted}</td>
+      `;
+      tableBody.appendChild(row);
+      form.reset();
+    });
+
+    function calculateAge(dob) {
+      const today = new Date();
+      let age = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+        age--;
+      }
+      return age;
+    }
+  </script>
+
+</body>
+</html>
+ 
