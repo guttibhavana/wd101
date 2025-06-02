@@ -1,35 +1,32 @@
-const form = document.getElementById('registrationForm');
-const tableBody = document.querySelector('#entriesTable tbody');
+const form = document.getElementById("registrationForm");
+const tableBody = document.querySelector("#entriesTable tbody");
 
-// Load entries from localStorage on page load
-window.addEventListener('DOMContentLoaded', () => {
+// Load data on page load
+document.addEventListener("DOMContentLoaded", () => {
   const entries = getEntriesFromStorage();
   entries.forEach(entry => appendEntryToTable(entry));
 });
 
-form.addEventListener('submit', function (e) {
+form.addEventListener("submit", function (e) {
   e.preventDefault();
 
-  const name = document.getElementById('name').value.trim();
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
-  const dob = document.getElementById('dob').value;
-  const accepted = document.getElementById('acceptTerms').checked;
+  const name = document.getElementById("name").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const dob = document.getElementById("dob").value;
+  const accepted = document.getElementById("acceptTerms").checked;
 
-  // Validate email
   if (!validateEmail(email)) {
-    alert("Please enter a valid email address.");
+    alert("Invalid email address.");
     return;
   }
 
-  // Validate age
-  const age = calculateAge(new Date(dob));
-  if (age < 18 || age > 55) {
+  if (!validateAge(dob)) {
     alert("Age must be between 18 and 55.");
     return;
   }
 
-  const userEntry = {
+  const newEntry = {
     name,
     email,
     password,
@@ -38,10 +35,10 @@ form.addEventListener('submit', function (e) {
   };
 
   const entries = getEntriesFromStorage();
-  entries.push(userEntry);
+  entries.push(newEntry);
   localStorage.setItem("userEntries", JSON.stringify(entries));
 
-  appendEntryToTable(userEntry);
+  appendEntryToTable(newEntry);
   form.reset();
 });
 
@@ -50,7 +47,7 @@ function getEntriesFromStorage() {
 }
 
 function appendEntryToTable(entry) {
-  const row = document.createElement('tr');
+  const row = document.createElement("tr");
   row.innerHTML = `
     <td>${entry.name}</td>
     <td>${entry.email}</td>
@@ -66,12 +63,13 @@ function validateEmail(email) {
   return pattern.test(email);
 }
 
-function calculateAge(dob) {
+function validateAge(dob) {
+  const birthDate = new Date(dob);
   const today = new Date();
-  let age = today.getFullYear() - dob.getFullYear();
-  const m = today.getMonth() - dob.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
-  return age;
+  return age >= 18 && age <= 55;
 }
